@@ -9,21 +9,27 @@ st.title("ONGC – Live DCS Flow Dashboard")
 
 @st.cache_data(ttl=5)
 def load_data():
-    return pd.read_csv(CSV_URL)
+    df = pd.read_csv(CSV_URL)
+
+    # DEBUG
+    st.write("Rows:", len(df))
+    st.write(df.tail())
+
+    return df
 
 try:
     df = load_data()
 
-    if df.empty:
-        st.error("No data available")
+    if len(df) == 0:
+        st.error("CSV loaded but empty")
     else:
-        df["Time"] = pd.to_datetime(df["Time"])
         latest = df.iloc[-1]
 
         st.metric("Flow", latest["Flow"])
         st.caption(f"Last Update: {latest['Time']}")
 
-        st.line_chart(df.set_index("Time")["Flow"])
+        st.line_chart(df["Flow"])
 
 except Exception as e:
-    st.error("No data available")
+    st.error("Streamlit error")
+    st.write(e)
