@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-CSV_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/dcs_log.csv"
+CSV_URL = "https://raw.githubusercontent.com/nitsingh89/ongc_dcs_dashboard/main/dcs_log.csv"
 
 st.set_page_config(page_title="ONGC DCS Flow", layout="centered")
 
@@ -14,12 +14,16 @@ def load_data():
 try:
     df = load_data()
 
-    latest = df.iloc[-1]
+    if df.empty:
+        st.error("No data available")
+    else:
+        df["Time"] = pd.to_datetime(df["Time"])
+        latest = df.iloc[-1]
 
-    st.metric("Flow", latest["Flow"])
-    st.caption(f"Last Update: {latest['Time']}")
+        st.metric("Flow", latest["Flow"])
+        st.caption(f"Last Update: {latest['Time']}")
 
-    st.line_chart(df["Flow"])
+        st.line_chart(df.set_index("Time")["Flow"])
 
-except:
+except Exception as e:
     st.error("No data available")
