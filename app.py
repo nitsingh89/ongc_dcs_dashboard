@@ -14,7 +14,7 @@ def load_data():
 try:
     df = load_data()
 
-    df = df.dropna()              # remove blank rows
+    df = df.dropna()
     df["Flow"] = pd.to_numeric(df["Flow"], errors="coerce")
 
     st.write(f"Rows: {len(df)}")
