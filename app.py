@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import time
 
 CSV_URL = "https://raw.githubusercontent.com/nitsingh89/ongc_dcs_dashboard/main/dcs_log_temp.csv"
 
@@ -7,29 +8,25 @@ st.set_page_config(page_title="ONGC DCS Flow", layout="centered")
 
 st.title("ONGC – Live DCS Flow Dashboard")
 
-@st.cache_data(ttl=5)
 def load_data():
-    df = pd.read_csv(CSV_URL)
-
-    # DEBUG
-    st.write("Rows:", len(df))
-    st.write(df.tail())
-
-    return df
+    url = f"{CSV_URL}?t={int(time.time())}"   # bypass GitHub cache
+    return pd.read_csv(url)
 
 try:
     df = load_data()
 
-    if len(df) == 0:
-        st.error("CSV loaded but empty")
-    else:
-        latest = df.iloc[-1]
+    st.write(f"Rows: {len(df)}")
 
-        st.metric("Flow", latest["Flow"])
-        st.caption(f"Last Update: {latest['Time']}")
+    latest = df.iloc[-1]
 
-        st.line_chart(df["Flow"])
+    st.metric("Flow", latest["Flow"])
+    st.caption(f"Last Update: {latest['Time']}")
+
+    st.line_chart(df["Flow"])
 
 except Exception as e:
-    st.error("Streamlit error")
-    st.write(e)
+    st.error("No data available")
+
+# auto refresh every 10 sec
+time.sleep(10)
+st.rerun()
