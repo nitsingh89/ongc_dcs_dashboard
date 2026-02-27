@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import time
 
-CSV_URL = "https://api.github.com/repos/nitsingh89/ongc_dcs_dashboard/main/dcs_log_temp.csv"
+CSV_URL = "https://raw.githubusercontent.com/nitsingh89/ongc_dcs_dashboard/main/dcs_log_temp.csv"
 
 st.set_page_config(page_title="ONGC DCS Flow", layout="centered")
-
 st.title("ONGC – Live DCS Flow Dashboard")
 
 def load_data():
@@ -15,11 +14,14 @@ def load_data():
 try:
     df = load_data()
 
+    df = df.dropna()              # remove blank rows
+    df["Flow"] = pd.to_numeric(df["Flow"], errors="coerce")
+
     st.write(f"Rows: {len(df)}")
 
     latest = df.iloc[-1]
 
-    st.metric("Flow", latest["Flow"])
+    st.metric("Flow", f"{latest['Flow']:.3f}")
     st.caption(f"Last Update: {latest['Time']}")
 
     st.line_chart(df["Flow"])
