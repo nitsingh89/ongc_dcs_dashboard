@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import time
 
-CSV_URL = "https://raw.githubusercontent.com/nitsingh89/ongc_dcs_dashboard/main/dcs_log.csv"
+CSV_URL = "https://raw.githubusercontent.com/nitsingh89/ongc_dcs_dashboard/main/dcs_log_temp.csv"
 
 st.set_page_config(page_title="ONGC DCS Flow", layout="centered")
 
